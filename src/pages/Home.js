@@ -44,7 +44,7 @@ const Home = () => {
       <Grid item xs={3}>
         <UserList />
       </Grid>
-      {/* <button onClick={handleLogOut}>Logout</button> */}
+      <button onClick={handleLogOut}>Logout</button>
     </>
   );
 };

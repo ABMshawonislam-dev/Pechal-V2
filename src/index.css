@@ -163,3 +163,10 @@
 .boximgholder img {
   width: 100%;
 }
+
+.img-preview {
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+  border-radius: 50%;
+}

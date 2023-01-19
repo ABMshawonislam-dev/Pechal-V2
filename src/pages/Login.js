@@ -73,11 +73,13 @@ const Login = () => {
       .then((userCredential) => {
         dispatch(activeUser(userCredential.user));
         localStorage.setItem("userInfo", JSON.stringify(userCredential.user));
-        if (userCredential.user.emailVerified) {
-          navigate("/pechal");
-        } else {
-          toast("Please Verify your email first and try again");
-        }
+        navigate("/pechal");
+        
+        // if (userCredential.user.emailVerified) {
+        //   navigate("/pechal");
+        // } else {
+        //   toast("Please Verify your email first and try again");
+        // }
       })
       .catch((error) => {
         const errorCode = error.code;

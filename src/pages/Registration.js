@@ -9,12 +9,14 @@ import Button from '@mui/material/Button';
 import AuthenticationLink from '../components/AuthenticationLink';
 import Alert from '@mui/material/Alert';
 import {AiFillEye,AiFillEyeInvisible} from 'react-icons/ai'
-import { getAuth, createUserWithEmailAndPassword,sendEmailVerification  } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,sendEmailVerification,updateProfile  } from "firebase/auth";
 import LinearProgress from '@mui/material/LinearProgress';
 import {useNavigate} from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Oval } from  'react-loader-spinner'
+import { getDatabase,set,ref,push } from "firebase/database";
+
 
 const CommonButton = styled(Button)({
     width: "100%",
@@ -35,6 +37,7 @@ const CommonButton = styled(Button)({
 const Registration = () => {
 
   const auth = getAuth();
+  const db = getDatabase();
   let navigate = useNavigate()
   let [formData,setFormData] = useState({
     email: "",
@@ -139,15 +142,31 @@ const Registration = () => {
     }else{
       createUserWithEmailAndPassword(auth,formData.email,formData.password).then((user)=>{
         sendEmailVerification(auth.currentUser)
-          .then(() => {
-            setLoader(false)
-            toast("Registration Successful. Please Cheak Your Email");
+        .then(()=>{
+          console.log(user.user)
 
-            setTimeout(()=>{
-
-              navigate("/login")
-            },2000)
+          updateProfile(auth.currentUser, {
+            displayName: formData.fullname
+          }).then(() => {
+            set(ref(db, 'users/' + user.user.uid), {
+              displayName: user.user.displayName,
+              email: user.user.email,
+            }).then(()=>{
+              setLoader(false)
+              toast("Registration Successful. Please Cheak Your Email");
+  
+              setTimeout(()=>{
+  
+                navigate("/login")
+              },2000)
+            })
+            
+          }).catch((error) => {
+            // An error occurred
+            // ...
           });
+        })
+          
 
     
       }).catch((error) => {
