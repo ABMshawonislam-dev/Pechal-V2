@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  remove,
+  set,
+  push,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import Alert from "@mui/material/Alert";
 
@@ -19,12 +26,33 @@ const FriendRequest = () => {
       let arr = [];
       snapshot.forEach((item) => {
         if (item.val().receiverid == data.userdata.userInfo.uid) {
-          arr.push(item.val());
+          arr.push({ ...item.val(), id: item.key });
         }
       });
       setFreq(arr);
     });
   }, []);
+
+  let handleReject = (item) => {
+    remove(ref(db, "frienrequest/" + item.id)).then(() => {
+      console.log("Delete");
+    });
+  };
+
+  let handleAccept = (item) => {
+    set(push(ref(db, "friends")), {
+      ...item,
+      date: `${new Date().getDate()}/${
+        new Date().getMonth() + 1
+      }/${new Date().getFullYear()}`,
+    }).then(() => {
+      remove(ref(db, "frienrequest/" + item.id)).then(() => {
+        console.log("Delete");
+      });
+    });
+  };
+
+  // 31/1/2023
 
   return (
     <div className="groupholder">
@@ -43,8 +71,12 @@ const FriendRequest = () => {
                 <p>Hi Guys, Wassup!</p>
               </div>
               <div>
-                <button className="boxbtn">Accept</button>
-                <button className="boxbtn">Reject</button>
+                <button onClick={() => handleAccept(item)} className="boxbtn">
+                  Accept
+                </button>
+                <button onClick={() => handleReject(item)} className="boxbtn">
+                  Reject
+                </button>
               </div>
             </div>
           ))
