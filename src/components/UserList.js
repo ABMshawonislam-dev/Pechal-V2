@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { useSelector } from "react-redux";
+import TextField from '@mui/material/TextField';
 
 const UserList = () => {
   let db = getDatabase();
   let [userlist, setUserlist] = useState([]);
   let [freq, setFreq] = useState([]);
   let [frineds, setFrineds] = useState([]);
+  let [searchlist, setSearchlist] = useState([]);
+  
 
   let data = useSelector((state) => state);
 
@@ -56,13 +59,27 @@ const UserList = () => {
     });
   };
 
+  let handleSearch = (e)=>{
+    let arr = []
+    userlist.filter((item)=>{
+      if(item.displayName.toLowerCase().includes(e.target.value.toLowerCase())){
+        arr.push(item)
+      }
+    })
+    setSearchlist(arr)
+
+  }
+
   return (
     <div className="groupholder">
       <div className="titleholder">
         <h3>Users List</h3>
+        <TextField onChange={handleSearch} id="outlined-basic" label="Outlined" variant="outlined" />
       </div>
       <div className="boxholder">
-        {userlist.map((item) => (
+        {searchlist.length < 1
+        ?
+        userlist.map((item) => (
           <div className="box">
             <div className="boximgholder">
               <img src="assets/profile.png" />
@@ -88,7 +105,37 @@ const UserList = () => {
               )}
             </div>
           </div>
-        ))}
+        ))
+        :
+        searchlist.map((item) => (
+          <div className="box">
+            <div className="boximgholder">
+              <img src="assets/profile.png" />
+            </div>
+            <div className="title">
+              <h3>{item.displayName}</h3>
+              <p>{item.email}</p>
+            </div>
+            <div>
+              {frineds.includes(item.id + data.userdata.userInfo.uid) ||
+              frineds.includes(data.userdata.userInfo.uid + item.id) ? (
+                <button className="boxbtn">Friend</button>
+              ) : freq.includes(item.id + data.userdata.userInfo.uid) ||
+                freq.includes(data.userdata.userInfo.uid + item.id) ? (
+                <button className="boxbtn">Pending</button>
+              ) : (
+                <button
+                  onClick={() => handleFriendRequest(item)}
+                  className="boxbtn"
+                >
+                  Send Request
+                </button>
+              )}
+            </div>
+          </div>
+        ))
+        }
+     
       </div>
     </div>
   );
