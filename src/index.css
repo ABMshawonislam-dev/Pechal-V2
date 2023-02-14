@@ -170,3 +170,165 @@
   overflow: hidden;
   border-radius: 50%;
 }
+
+.chat {
+  width: 100%;
+  padding: 17px 78px;
+  box-sizing: border-box;
+  border: 0;
+  -webkit-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 5px 23px 0px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  height: 100vh;
+  margin-top: 43px;
+}
+
+.chat .toparea {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  padding-bottom: 25px;
+}
+
+.chat .toparea .info {
+  display: flex;
+  align-items: center;
+  width: 90%;
+}
+
+.chat .img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: red;
+  margin-right: 33px;
+  position: relative;
+  filter: drop-shadow(0 0 0.35rem rgba(0, 0, 0, 0.464));
+}
+
+.chat .img .round {
+  width: 13px;
+  height: 13px;
+  background: #00ff75;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.chat .img img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.chat .indentity h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.chat .indentity p {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.chat .dots {
+  font-size: 25px;
+  width: 10%;
+  color: #5f35f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat .chatarea {
+  height: 70vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  padding-bottom: 47px;
+  padding-right: 25px;
+}
+
+.chat .msg {
+  display: flex;
+  position: relative;
+  margin-top: 60px;
+}
+
+.chat .msg p {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  display: inline-block;
+  padding: 13px 53px;
+  border-radius: 10px;
+}
+
+.chat .msg .date {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  bottom: -38px;
+}
+
+.chat .msg .name {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  top: -38px;
+}
+
+.chat .chatimg {
+  padding: 10px;
+  width: 200px;
+}
+
+.chat .chatimg img {
+  width: 100%;
+}
+
+.msgwrite {
+  position: relative;
+}
+
+.msgwrite input {
+  width: 88%;
+  background: #f1f1f1;
+  border: 0;
+  padding: 15px;
+  margin-top: 35px;
+  border-radius: 10px;
+}
+
+.msgwrite input::placeholder {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.msgwrite button {
+  background: #5f35f5;
+  color: #fff;
+  border: 0;
+  padding: 10px;
+  border-radius: 10px;
+  margin-left: 20px;
+  position: relative;
+  top: 3px;
+}
+
+.msgwrite .camera {
+  position: absolute;
+  top: 48px;
+  right: 81px;
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.5);
+}

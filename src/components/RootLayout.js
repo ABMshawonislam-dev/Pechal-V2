@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import { Link } from "react-router-dom";
 
 import {
   getStorage,
@@ -120,8 +121,12 @@ const RootLayout = () => {
               </div>
               <h5>{data.userdata.userInfo.displayName}</h5>
               <div className="iconholder">
-                <AiOutlineHome className="icon" />
-                <AiOutlineMessage className="icon" />
+                <Link to="/pechal">
+                  <AiOutlineHome className="icon" />
+                </Link>
+                <Link to="/pechal/message">
+                  <AiOutlineMessage className="icon" />
+                </Link>
                 <IoIosNotifications className="icon" />
                 <AiFillSetting className="icon" />
                 <AiOutlineLogout className="icon" />
