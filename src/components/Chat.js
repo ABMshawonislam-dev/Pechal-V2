@@ -1,9 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FiSend } from "react-icons/fi";
 import { AiOutlineCamera } from "react-icons/ai";
+import { useSelector } from "react-redux";
+import { getDatabase, ref, set,push,onValue } from "firebase/database";
+
 
 const Chat = () => {
+  const db = getDatabase();
+  let data = useSelector((state)=> state)
+  console.log("sm",data.activeUser.activeChatUser)
+
+  let [msg,setMsg] = useState("")
+  let [msglist,setMsgList] = useState([])
+
+  let handleSendMsg = ()=>{
+    if(data.activeUser.activeChatUser.status == "single"){
+      set(push(ref(db, 'singlemsg')), {
+        whosendid: data.userdata.userInfo.uid,
+        whosendname: data.userdata.userInfo.displayName,
+         whoreceivedid: data.userdata.userInfo.uid == data.activeUser.activeChatUser.senderid ? data.activeUser.activeChatUser.receiverid
+         :
+         data.activeUser.activeChatUser.senderid,
+         whoreceivedname: data.userdata.userInfo.uid == data.activeUser.activeChatUser.senderid ? data.activeUser.activeChatUser.receivername
+         :
+         data.activeUser.activeChatUser.sendername,
+         msg: msg,
+         date: `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+      });
+    }
+  }
+
+  useEffect(()=>{
+    const usersRef = ref(db, "singlemsg");
+    onValue(usersRef, (snapshot) => {
+      let arr = [];
+      snapshot.forEach((item) => {
+     
+          arr.push(item.val());
+   
+      });
+      setMsgList(arr);
+    });
+  },[])
+
+
   return (
     <div className="chat">
       <div className="toparea">
@@ -13,7 +56,13 @@ const Chat = () => {
             <div className="round"></div>
           </div>
           <div className="indentity">
-            <h3>Shawon</h3>
+            {data.userdata.userInfo.uid == data.activeUser.activeChatUser.senderid
+            ?
+            <h3>{data.activeUser.activeChatUser.receivername}</h3>
+            
+            :
+            <h3>{data.activeUser.activeChatUser.sendername}</h3>
+            }
             <p>Online</p>
           </div>
         </div>
@@ -23,17 +72,20 @@ const Chat = () => {
       </div>
       <div className="chatarea">
         <>
+        {msglist.map(item=>(
           <div className="msg" style={alignRight}>
             <p className="name" style={dateReceive}>
               Shawon
             </p>
-            <p style={msgsend}>amni</p>
+            <p style={msgsend}>{item.msg}</p>
             <p className="date" style={dateReceive}>
               2 minutes ago
             </p>
           </div>
+        ))}
+          
         </>
-        <div className="msg" style={alignLeft}>
+        {/* <div className="msg" style={alignLeft}>
           <p className="name" style={dateSend}>
             islam
           </p>
@@ -41,42 +93,45 @@ const Chat = () => {
           <p className="date" style={dateSend}>
             2 minutes ago
           </p>
-        </div>
-        <>
+        </div> */}
+        {/* <>
           <div className="msg" style={alignRight}>
             <p style={msgsend}>qweqwe</p>
             <p className="date" style={dateReceive}>
               2 minutes ago
             </p>
           </div>
-        </>
+        </> */}
 
-        <div className="msg" style={alignRight}>
+        {/* <div className="msg" style={alignRight}>
           <div className="chatimg" style={msgsend}>
             <img src="assets/profile.png" alt="chat-img"></img>
             <p className="date" style={dateReceive}>
               2 minutes ago
             </p>
           </div>
-        </div>
+        </div> */}
 
-        <div className="msg" style={alignLeft}>
+        {/* <div className="msg" style={alignLeft}>
           <p style={msgreceive}>tyutyu</p>
           <p className="date" style={dateSend}>
             2 minutes ago
           </p>
-        </div>
-        <div className="msg" style={alignLeft}>
-          <div className="chatimg" style={msgreceive}>
-            <img src="assets/profile.png" alt="chat-img"></img>
-            <p className="date" style={dateSend}>
-              2 minutes ago
-            </p>
-          </div>
-        </div>
+        </div> */}
+        */}
       </div>
 
       <div className="msgbox">
+        <div className="msgwrite">
+          <input onChange={(e)=>setMsg(e.target.value)} type="text" placeholder="Message" />
+          <AiOutlineCamera className="camera" />
+          <button onClick={handleSendMsg}>
+            <FiSend />
+          </button>
+        </div>
+      </div>
+
+      {/* <div className="msgbox">
         <div className="msgwrite">
           <input type="text" placeholder="Message" />
           <AiOutlineCamera className="camera" />
@@ -84,17 +139,7 @@ const Chat = () => {
             <FiSend />
           </button>
         </div>
-      </div>
-
-      <div className="msgbox">
-        <div className="msgwrite">
-          <input type="text" placeholder="Message" />
-          <AiOutlineCamera className="camera" />
-          <button>
-            <FiSend />
-          </button>
-        </div>
-      </div>
+      </div> */}
     </div>
   );
 };

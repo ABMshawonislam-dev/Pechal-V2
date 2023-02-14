@@ -7,10 +7,13 @@ import {
   push,
   remove,
 } from "firebase/database";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { activeChatUser } from "../slices/activeChatSlice";
 
 const Friends = () => {
   let db = getDatabase();
+ let dispatch = useDispatch()
+
   let [friends, setFriends] = useState([]);
 
   let data = useSelector((state) => state);
@@ -58,6 +61,11 @@ const Friends = () => {
     }
   };
 
+  let handleActiveChat = (item)=>{
+   
+    dispatch(activeChatUser({...item,status:"single"}))
+  }
+
   return (
     <div className="groupholder">
       <div className="titleholder">
@@ -65,7 +73,7 @@ const Friends = () => {
       </div>
       <div className="boxholder">
         {friends.map((item) => (
-          <div className="box">
+          <div className="box" onClick={()=>handleActiveChat(item)}>
             <div className="boximgholder">
               <img src="assets/profile.png" />
             </div>

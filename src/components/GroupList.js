@@ -70,7 +70,7 @@ const GroupList = () => {
   return (
     <div className="groupholder">
       <div className="titleholder">
-        <h3>Groups List</h3>
+        <h3>Groups List a</h3>
         <button onClick={handleOpen}>Create Group</button>
       </div>
       <div className="boxholder">
