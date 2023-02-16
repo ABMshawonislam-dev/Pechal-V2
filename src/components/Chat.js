@@ -9,7 +9,8 @@ import { getDatabase, ref, set,push,onValue } from "firebase/database";
 const Chat = () => {
   const db = getDatabase();
   let data = useSelector((state)=> state)
-  console.log("sm",data.activeUser.activeChatUser)
+  console.log("data",data.userdata.userInfo.uid)
+  console.log("data",data)
 
   let [msg,setMsg] = useState("")
   let [msglist,setMsgList] = useState([])
@@ -33,18 +34,25 @@ const Chat = () => {
     }
   }
 
+
   useEffect(()=>{
     const usersRef = ref(db, "singlemsg");
     onValue(usersRef, (snapshot) => {
       let arr = [];
+      
+  let id = data.activeUser.activeChatUser.receiverid == data.userdata.userInfo.uid ? data.activeUser.activeChatUser.senderid : data.activeUser.activeChatUser.receiverid
       snapshot.forEach((item) => {
-     
+        if((item.val().whosendid == data.userdata.userInfo.uid && item.val().whoreceivedid == id) || (item.val().whosendid == id && item.val().whoreceivedid == data.userdata.userInfo.uid)){
           arr.push(item.val());
+
+        }
+     
+        console.log("user data",id)
    
       });
       setMsgList(arr);
     });
-  },[])
+  },[data])
 
 
   return (
@@ -73,6 +81,8 @@ const Chat = () => {
       <div className="chatarea">
         <>
         {msglist.map(item=>(
+          item.whosendid == data.userdata.userInfo.uid
+          ? 
           <div className="msg" style={alignRight}>
             <p className="name" style={dateReceive}>
               Shawon
@@ -82,6 +92,16 @@ const Chat = () => {
               2 minutes ago
             </p>
           </div>
+          :
+          <div className="msg" style={alignLeft}>
+          <p className="name" style={dateSend}>
+            islam
+          </p>
+          <p style={msgreceive}>{item.msg}</p>
+          <p className="date" style={dateSend}>
+            2 minutes ago
+          </p>
+        </div>
         ))}
           
         </>
@@ -118,7 +138,7 @@ const Chat = () => {
             2 minutes ago
           </p>
         </div> */}
-        */}
+        {/* } */}
       </div>
 
       <div className="msgbox">
