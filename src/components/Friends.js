@@ -10,9 +10,11 @@ import {
 import { useSelector,useDispatch } from "react-redux";
 import { activeChatUser } from "../slices/activeChatSlice";
 
-const Friends = () => {
+const Friends = ({block,msg}) => {
   let db = getDatabase();
  let dispatch = useDispatch()
+
+ console.log("msg frinedn",msg)
 
   let [friends, setFriends] = useState([]);
 
@@ -33,6 +35,22 @@ const Friends = () => {
       setFriends(arr);
     });
   }, []);
+
+  let handleSendMsg = (id)=>{
+    console.log("active user", data.activeUser.activeChatUser)
+    if(data.activeUser.activeChatUser.status == "single"){
+      set(push(ref(db, 'singlemsg')), {
+        whosendid: data.userdata.userInfo.uid,
+        whosendname: data.userdata.userInfo.displayName,
+         whoreceivedid: id,
+         whoreceivedname: "shawon",
+         msg: msg,
+         date: `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+      })
+    }
+  }
 
   let handleBlock = (item) => {
     console.log(item);
@@ -64,6 +82,7 @@ const Friends = () => {
   let handleActiveChat = (item)=>{
    
     dispatch(activeChatUser({...item,status:"single"}))
+    
   }
 
   return (
@@ -86,9 +105,15 @@ const Friends = () => {
               <p>Hi Guys, Wassup!</p>
             </div>
             <div>
-              <button onClick={() => handleBlock(item)} className="boxbtn">
+              {!block ?
+              <button  onClick={() => handleBlock(item)} className="boxbtn">
                 Block
               </button>
+              :
+              <button onClick={handleSendMsg(item.receiverid == data.userdata.userInfo.uid?item.senderid : item.receiverid)}  className="boxbtn">
+                send
+              </button>
+}
             </div>
           </div>
         ))}

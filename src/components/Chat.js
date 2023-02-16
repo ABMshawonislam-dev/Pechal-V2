@@ -4,13 +4,40 @@ import { FiSend } from "react-icons/fi";
 import { AiOutlineCamera } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, set,push,onValue } from "firebase/database";
+import moment from "moment/moment";
+import ScrollToBottom from 'react-scroll-to-bottom';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Friends from "./Friends"
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const Chat = () => {
   const db = getDatabase();
   let data = useSelector((state)=> state)
   console.log("data",data.userdata.userInfo.uid)
   console.log("data",data)
+
+
+  let [fmsg,setFmsg]=useState("")
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = (msg) => {
+    setFmsg(msg)
+    setOpen(true)
+  };
+  const handleClose = () => setOpen(false);
 
   let [msg,setMsg] = useState("")
   let [msglist,setMsgList] = useState([])
@@ -30,7 +57,9 @@ const Chat = () => {
          date: `${new Date().getFullYear()}-${
           new Date().getMonth() + 1
         }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
-      });
+      }).then(()=>{
+        setMsg("")
+      })
     }
   }
 
@@ -47,12 +76,16 @@ const Chat = () => {
 
         }
      
-        console.log("user data",id)
+       
    
       });
       setMsgList(arr);
     });
-  },[data])
+  },[])
+
+  // let handleForword = ()=>{
+  //   console.log("forword msg")
+  // }
 
 
   return (
@@ -78,7 +111,7 @@ const Chat = () => {
           <BiDotsVerticalRounded />
         </div>
       </div>
-      <div className="chatarea">
+      <ScrollToBottom  className="chatarea">
         <>
         {msglist.map(item=>(
           item.whosendid == data.userdata.userInfo.uid
@@ -87,9 +120,10 @@ const Chat = () => {
             <p className="name" style={dateReceive}>
               Shawon
             </p>
-            <p style={msgsend}>{item.msg}</p>
+            <p style={msgsend}>{item.msg} <button>reply</button> <button onClick={()=>handleOpen(item.msg)}>forward</button></p>
             <p className="date" style={dateReceive}>
-              2 minutes ago
+            {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+              
             </p>
           </div>
           :
@@ -99,7 +133,7 @@ const Chat = () => {
           </p>
           <p style={msgreceive}>{item.msg}</p>
           <p className="date" style={dateSend}>
-            2 minutes ago
+          {moment(item.date, "YYYYMMDD  hh:mm").fromNow()}
           </p>
         </div>
         ))}
@@ -139,11 +173,11 @@ const Chat = () => {
           </p>
         </div> */}
         {/* } */}
-      </div>
+      </ScrollToBottom >
 
       <div className="msgbox">
         <div className="msgwrite">
-          <input onChange={(e)=>setMsg(e.target.value)} type="text" placeholder="Message" />
+          <input onChange={(e)=>setMsg(e.target.value)} value={msg} type="text" placeholder="Message" />
           <AiOutlineCamera className="camera" />
           <button onClick={handleSendMsg}>
             <FiSend />
@@ -160,6 +194,17 @@ const Chat = () => {
           </button>
         </div>
       </div> */}
+     
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+         <Friends block="true" msg={fmsg}/>
+        </Box>
+      </Modal>
     </div>
   );
 };
@@ -189,16 +234,16 @@ let dateReceive = {
   right: "-49px",
 };
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+// const style = {
+//   position: "absolute",
+//   top: "50%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   width: 400,
+//   bgcolor: "background.paper",
+//   border: "2px solid #000",
+//   boxShadow: 24,
+//   p: 4,
+// };
 
 export default Chat;
