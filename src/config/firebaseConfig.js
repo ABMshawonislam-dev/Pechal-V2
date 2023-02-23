@@ -2,12 +2,12 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD0AAP0e12I-UOv8706fTikS_qudLrOko4",
-  authDomain: "pechal-9e1c3.firebaseapp.com",
-  projectId: "pechal-9e1c3",
-  storageBucket: "pechal-9e1c3.appspot.com",
-  messagingSenderId: "686922728446",
-  appId: "1:686922728446:web:2a89f6285d0ff8aa3976af"
+  apiKey: "AIzaSyDmMcxXjFh6OqMiRpI2ylCpC9FtHk_6dfo",
+  authDomain: "abcd-1babf.firebaseapp.com",
+  projectId: "abcd-1babf",
+  storageBucket: "abcd-1babf.appspot.com",
+  messagingSenderId: "366753597680",
+  appId: "1:366753597680:web:6541c2e501509616da1a35"
 };
 
 
