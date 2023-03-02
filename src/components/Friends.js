@@ -17,6 +17,7 @@ const Friends = ({block,msg}) => {
  console.log("msg frinedn",msg)
 
   let [friends, setFriends] = useState([]);
+  let [msglist, setMsgList] = useState([]);
 
   let data = useSelector((state) => state);
 
@@ -85,6 +86,18 @@ const Friends = ({block,msg}) => {
     
   }
 
+
+  useEffect(()=>{
+    const usersRef = ref(db, "singlemsg");
+    onValue(usersRef, (snapshot) => {
+      let arr = [];
+      snapshot.forEach((item) => {
+          arr.push(item.val());
+      });
+      setMsgList(arr);
+    });
+  },[])
+
   return (
     <div className="groupholder">
       <div className="titleholder">
@@ -102,7 +115,7 @@ const Friends = ({block,msg}) => {
               ) : (
                 <h3>{item.receivername}</h3>
               )}
-              <p>Hi Guys, Wassup!</p>
+              <p>{item.lastmsg}</p>
             </div>
             <div>
               {!block ?

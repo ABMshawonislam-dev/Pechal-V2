@@ -3,11 +3,18 @@
   padding: 0;
 }
 
+.dark {
+  background: #000;
+  color: #fff;
+}
+
 .heading {
   font-family: "Nunito", sans-serif;
   font-size: 34.4px;
   font-weight: 700;
 }
+
+
 
 .registrationimg {
   width: 100%;
@@ -117,6 +124,10 @@
   margin-bottom: 40px;
 }
 
+.dark .groupholder {
+  background: #000;
+}
+
 .titleholder {
   display: flex;
   justify-content: space-between;
@@ -130,6 +141,9 @@
   font-weight: 500;
   border-radius: 10px;
 }
+
+
+
 
 .boxbtn {
   padding: 10px;

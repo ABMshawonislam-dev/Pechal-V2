@@ -3,7 +3,7 @@ import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FiSend } from "react-icons/fi";
 import { AiOutlineCamera } from "react-icons/ai";
 import { useSelector } from "react-redux";
-import { getDatabase, ref, set,push,onValue } from "firebase/database";
+import { getDatabase, ref, set,push,onValue, update } from "firebase/database";
 import moment from "moment/moment";
 import ScrollToBottom from 'react-scroll-to-bottom';
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import { getStorage, ref as sref, uploadBytes,getDownloadURL,uploadString } from
 import Camera from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import { AudioRecorder } from 'react-audio-voice-recorder';
+import EmojiPicker from 'emoji-picker-react';
 
 const style = {
   position: 'absolute',
@@ -47,6 +48,7 @@ const Chat = () => {
   let [fmsg,setFmsg]=useState("")
   let [isCamera,setisCamera]=useState(false)
   const [open, setOpen] = React.useState(false);
+  const [showe, setShowe] = React.useState(false);
   const handleOpen = (msg) => {
     setFmsg(msg)
     setOpen(true)
@@ -55,6 +57,7 @@ const Chat = () => {
 
   let [msg,setMsg] = useState("")
   let [msglist,setMsgList] = useState([])
+  let [gmsglist,setGmsgList] = useState([])
 
   let handleSendMsg = ()=>{
     if(data.activeUser.activeChatUser.status == "single"){
@@ -89,9 +92,6 @@ const Chat = () => {
           arr.push(item.val());
 
         }
-     
-       
-   
       });
       setMsgList(arr);
     });
@@ -100,6 +100,20 @@ const Chat = () => {
   // let handleForword = ()=>{
   //   console.log("forword msg")
   // }
+
+  useEffect(()=>{
+    const usersRef = ref(db, "groupmsg");
+    onValue(usersRef, (snapshot) => {
+      let arr = [];
+      
+  let id = data.activeUser.activeChatUser.receiverid == data.userdata.userInfo.uid ? data.activeUser.activeChatUser.senderid : data.activeUser.activeChatUser.receiverid
+      snapshot.forEach((item) => {
+          arr.push(item.val());
+      });
+      setGmsgList(arr);
+      console.log(gmsglist)
+    });
+  },[])
 
   let handleKeyPress = (e)=>{
     if(e.key == "Enter"){
@@ -119,6 +133,27 @@ const Chat = () => {
           }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
         }).then(()=>{
           setMsg("")
+          console.log("idddd",data.activeUser.activeChatUser.key)
+          update(ref(db, 'friends/'+data.activeUser.activeChatUser.key), {
+            lastmsg: msg,
+         })
+        })
+
+        
+        // Last MSG
+       
+      }else{
+        set(push(ref(db, 'groupmsg')), {
+          whosendid: data.userdata.userInfo.uid,
+          whosendname: data.userdata.userInfo.displayName,
+           whoreceivedid: data.activeUser.activeChatUser.gid,
+           msg: msg,
+           date: `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+        }).then(()=>{
+          setMsg("")
+         
         })
       }
     }
@@ -189,6 +224,12 @@ uploadString(storageRef, message4, 'data_url').then((snapshot) => {
 });
   }
 
+  let handleEmoji = (e)=>{
+    console.log(e.emoji)
+    setMsg(msg+e.emoji)
+    setShowe(false)
+  }
+
 
   return (
     <div className="chat">
@@ -206,6 +247,7 @@ uploadString(storageRef, message4, 'data_url').then((snapshot) => {
             :
             <h3>{data.activeUser.activeChatUser.sendername}</h3>
             }
+            <h3>{data.activeUser.activeChatUser.groupname}</h3>
             <p>Online</p>
           </div>
         </div>
@@ -215,7 +257,10 @@ uploadString(storageRef, message4, 'data_url').then((snapshot) => {
       </div>
       <ScrollToBottom  className="chatarea">
         <>
-        {msglist.map(item=>(
+        <h1>adljalsdkjalkdjalkdj</h1>
+        {data.activeUser.activeChatUser.status == "single" 
+        ?
+        msglist.map(item=>(
           item.whosendid == data.userdata.userInfo.uid
           ? 
           <div className="msg" style={alignRight}>
@@ -253,7 +298,50 @@ uploadString(storageRef, message4, 'data_url').then((snapshot) => {
           {moment(item.date, "YYYYMMDD  hh:mm").fromNow()}
           </p>
         </div>
-        ))}
+        ))
+         :
+         gmsglist.map(item=>(
+          item.whosendid == data.userdata.userInfo.uid
+          ? item.whoreceivedid ==  data.activeUser.activeChatUser.gid &&
+          <div className="msg" style={alignRight}>
+            <p className="name" style={dateReceive}>
+            {item.whosendname}aa
+            </p>
+            {item.msg 
+            ?
+            <p style={msgsend}>{item.msg} 
+            {/* <button>reply</button> <button onClick={()=>handleOpen(item.msg)}>forward</button> */}
+            </p>
+            :
+            <img style={{width:"100%"}} src={item.img} alt="chat-img"/>
+            }
+            
+            <p className="date" style={dateReceive}>
+            {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+              
+            </p>
+          </div>
+          :item.whoreceivedid ==  data.activeUser.activeChatUser.gid &&
+          <div className="msg" style={alignLeft}>
+          <p className="name" style={dateSend}>
+          {item.whosendname}bb
+          </p>
+          {item.msg 
+            ?
+            <p style={msgsend}>{item.msg} 
+            {/* <button>reply</button> <button onClick={()=>handleOpen(item.msg)}>forward</button> */}
+            </p>
+            :
+            <img style={{width:"100%"}} src={item.img} alt="chat-img"/>
+            }
+          <p className="date" style={dateSend}>
+          {moment(item.date, "YYYYMMDD  hh:mm").fromNow()}
+          </p>
+        </div>
+        ))
+         
+         }
+        
           
         </>
         {/* <div className="msg" style={alignLeft}>
@@ -319,6 +407,11 @@ uploadString(storageRef, message4, 'data_url').then((snapshot) => {
           </button>
         </div>
       </div> */}
+
+      <button onClick={()=>setShowe(!showe)}>Emoji</button>
+{showe&&
+<EmojiPicker onEmojiClick={(e)=>handleEmoji(e)}/>}
+      
      
      {isCamera && 
      

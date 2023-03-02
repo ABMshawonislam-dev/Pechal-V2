@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Box, Button, Typography, Modal } from "@mui/material/";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
-import { useSelector } from "react-redux";
+
+import { useSelector,useDispatch } from "react-redux";
+import { activeChatUser } from "../slices/activeChatSlice";
 
 const style = {
     position: "absolute",
@@ -18,6 +20,7 @@ const style = {
 const JoinGroupList = () => {
 
     const db = getDatabase();
+    let dispatch = useDispatch()
 
     let data = useSelector((state) => state);
   
@@ -92,6 +95,14 @@ const JoinGroupList = () => {
       });
     };
 
+    let handleActiveChat = (item)=>{
+
+      console.log(item)
+     
+      dispatch(activeChatUser({...item,status:"group"}))
+      
+    }
+
   return (
     <div className="groupholder">
       <div className="titleholder">
@@ -100,7 +111,7 @@ const JoinGroupList = () => {
       </div>
       <div className="boxholder">
         {glist.map((item) => (
-          <div className="box">
+          <div className="box" onClick={()=>handleActiveChat(item)}>
             <div className="boximgholder">
               <img src="assets/profile.png" />
             </div>
